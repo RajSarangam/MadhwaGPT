@@ -10,11 +10,13 @@ from google.generativeai.types import HarmCategory, HarmBlockThreshold
 from pdf2image import convert_from_path, pdfinfo_from_path
 
 # ================================
-# CONFIG
+# CONFIG (KAGGLE ONLY CHANGE)
 # ================================
-BASE_DIR = Path(__file__).resolve().parent
-DATA_DIR = BASE_DIR / "ocr_input"
-OUTPUT_DIR = BASE_DIR / "ocr_output"
+# ONLY CHANGES:
+# - Input folder  -> /kaggle/input/pramana-laxana
+# - Output folder -> /kaggle/working/ocr_output
+DATA_DIR = Path("/kaggle/input/pramana-laxana")
+OUTPUT_DIR = Path("/kaggle/working/ocr_output")
 OUTPUT_DIR.mkdir(exist_ok=True)
 
 RAW_DIR = OUTPUT_DIR / "raw"
@@ -40,7 +42,7 @@ You are an OCR engine for Sanskrit (Devanagari), Kannada, and English.
 
 Rules:
 - Extract EXACT text as printed.
-- Preserve all conjuncts (क्ष त्र ज्ञ द्य ಕ್ಶ ದ್ಯ etc.)
+- Preserve all conjuncts (क्ष त्र ज्ञ द्य क್ಶ ದ್ಯ etc.)
 - Preserve anusvāra, visarga, chandrabindu, avagraha (ऽ).
 - Preserve all line breaks.
 - Do NOT correct anything.
@@ -620,6 +622,28 @@ def run_pipeline(pdf_path, start_page=1, mode="two-pass", batch_size=10):
 # ================================
 # MAIN
 # ================================
+
+if __name__ == "__main__":
+    print("\n======== MADHWA OCR EXTRACTION ========\n")
+
+    # Kaggle does NOT support input()
+    pdfs = list(DATA_DIR.glob("*.pdf"))
+    if not pdfs:
+        raise RuntimeError(f"No PDFs found in {DATA_DIR}")
+
+    pdf = pdfs[0]        # same as typing "1"
+    mode = "two-pass"    # same as typing "2"
+    batch_size = 10      # same as pressing Enter (default)
+    start_page = 1       # same as typing "1"
+
+    run_pipeline(
+        pdf,
+        start_page=start_page,
+        mode=mode,
+        batch_size=batch_size
+    )
+'''
+
 if __name__ == "__main__":
     print("\n======== MADHWA OCR EXTRACTION ========\n")
 
@@ -638,3 +662,5 @@ if __name__ == "__main__":
 
     # Run OCR pipeline with selected options
     run_pipeline(pdf, start_page=start_page, mode=mode, batch_size=batch_size)
+
+'''
